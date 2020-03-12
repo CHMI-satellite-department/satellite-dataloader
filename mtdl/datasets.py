@@ -57,9 +57,7 @@ class SatpyDir2H5:
         """
         files = satpy.find_files_and_readers(base_dir=source, reader=self.reader)
         scene = satpy.Scene(filenames=files)
-        scene.load(self.channels)
 
-        # TODO: consider moving this before scene.load to save some time
         out_name_dict = {'instrument': self.instrument, 'proj': self.proj}
         out_name_dict.update(scene.attrs)
         fname = Path(dest) / self.out_mask.format(**out_name_dict)
@@ -67,6 +65,7 @@ class SatpyDir2H5:
             self.logger.info(f'SKIPPING {fname}, already exists')
             return
 
+        scene.load(self.channels)
         scene = scene.resample(self.proj, **self.proj_kwargs)
 
         loc_ds = {}
