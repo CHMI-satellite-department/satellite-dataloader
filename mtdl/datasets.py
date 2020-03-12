@@ -36,7 +36,7 @@ def walk_and_convert(converter, source, dest, level=0, mask='*'):
 class SatpyDir2H5:
     def __init__(self, proj, instrument='SEVIRI', out_mask='{proj}-{instrument}-{start_time}.nc', overwrite=False,
                  radius_of_influence=50000, **proj_kwargs):
-        self.logger = getLogger(self.__class__.__name__)
+        self.logger = logging.getLogger(self.__class__.__name__)
 
         self.proj = proj
         self.instrument = instrument
