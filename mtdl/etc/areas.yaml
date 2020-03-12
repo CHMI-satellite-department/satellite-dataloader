@@ -1,0 +1,13 @@
+CE_ML_v00:
+  description: Central Europe 1160x800
+  projection:
+    proj: merc
+    lat_0: 50
+    lon_0: 14.5
+    ellps: WGS84  
+  shape:
+    width: 1600
+    height: 1200  
+  area_extent:
+    lower_left_xy: [-1805152.04,  5172213.35]
+    upper_right_xy: [1811322.74,  7660679.05]
