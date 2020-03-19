@@ -102,6 +102,6 @@ class H5Dataset:
     def _read_data(self, source):
         return xr.open_dataset(source)
 
-class H5DatasetTorch(H5DataSet):
+class H5DatasetTorch(H5Dataset):
     def __getitem__(self, index):
         return torch.FloatTensor(super().__getitem__(index))
