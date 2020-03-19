@@ -4,6 +4,8 @@ from tqdm.auto import tqdm
 import warnings
 import xarray as xr
 import satpy
+import random
+import torch
 
 INSTRUMENTS = {}
 INSTRUMENTS['SEVIRI'] = {'reader': 'seviri_l1b_hrit',
@@ -78,3 +80,28 @@ class SatpyDir2H5:
 
         loc_ds.to_netcdf(fname, engine='h5netcdf', encoding={n: {'zlib': True, 'complevel': 9} for n in self.channels})
         self.logger.info(f'CREATED {fname}')
+
+
+class H5Dataset:
+    def __init__(self, source, size=(256, 256), mask='*.nc'):
+        self._datafiles = tuple(Path(source).glob(mask))
+        self._size = size
+
+    def __len__(self):
+        return len(self._datafiles)
+
+    def __getitem__(self, index):
+        data = self._read_data(self._datafiles[index])
+        coords = list(data.coords)
+        x0 = random.randint(0, len(data[coords[0]]) - 1 - self._size[0])
+        y0 = random.randint(0, len(data[coords[1]]) - 1 - self._size[1])
+        data = data.isel(**{coords[0]: slice(x0, x0+self._size[0]), coords[1]:slice(y0, y0+self._size[1])})
+        data = data.to_array(dim='channel')
+        return data.values
+
+    def _read_data(self, source):
+        return xr.open_dataset(source)
+
+class H5DatasetTorch(H5DataSet):
+    def __getitem__(self, index):
+        return torch.FloatTensor(super().__getitem__(index))
