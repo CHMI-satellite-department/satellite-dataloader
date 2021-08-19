@@ -22,6 +22,8 @@ def image2xr(path: str or Path, georef: str or Path or xr.DataArray=None, requir
         if not isinstance(georef, xr.DataArray):
             georef = image2xr(georef)
 
+        da.coords['x'] = georef.x.data
+        da.coords['y'] = georef.y.data
         da.coords['lat'] = (('y', 'x'), georef.lat.data)
         da.coords['lon'] = (('y', 'x'), georef.lon.data)
 
@@ -39,7 +41,7 @@ def image2xr(path: str or Path, georef: str or Path or xr.DataArray=None, requir
         da.coords['lat'] = (('y', 'x'), lat)
         da.coords['lon'] = (('y', 'x'), lon)
 
-    if require_georef and ('lat' not in da.coords or 'lon' not in da.coords):
+    if require_georef and ('lat' not in da.coords or 'lon' not in da.coords or 'crs' not in da.attrs):
         raise ValueError(f'cannot georeference image {path}')
 
     return da
