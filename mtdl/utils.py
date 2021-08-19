@@ -1,10 +1,21 @@
 import numpy as np
+from pathlib import Path
 from pyproj import CRS
 from pyproj import Transformer
 import xarray as xr
 
-def image2xr(path, georef=None, require_georef=True):
-    """Load georeferenced TIFF"""
+def image2xr(path: str or Path, georef: str or Path or xr.DataArray=None, require_georef: bool=True) -> xr.DataArray:
+    """Load (possibly georeferenced) image
+
+    Parameters
+    ----------
+    path : str or Path
+        path to image to be loaded
+    georef: str or Path or xr.DataArray
+        georeference using this image or DataArray (must contain coordinates lon and lat and have the same size)
+    require_georef : bool
+        raise if the output misses lon/lat coordinates? (default: True)
+    """
     da = xr.open_rasterio(path)
 
     if georef is not None:
