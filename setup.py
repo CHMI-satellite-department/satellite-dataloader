@@ -17,7 +17,7 @@ setuptools.setup(name='meteotinder-dataloader',
                      'Programming Language :: Python :: 3.8'
                  ],
                  packages=['mtdl'],
-                 install_requires=['satpy'],
+                 install_requires=['numpy', 'pyproj', 'satpy', 'trollsift', 'xarray'],
                  scripts=[]
                  )
 
