@@ -1,3 +1,4 @@
+from collections import defaultdict
 from functools import lru_cache
 import logging
 import numpy as np
@@ -15,14 +16,14 @@ def _get_get_image(georef):
 
     def _get_image(path):
         _logger.debug(f'loading georeferenced image {path}')
-        return image2xr(path, georef=georef)
+        return image2xr(path, georef=georef).load()
 
     return _get_image
 
 
 class StaticImageFolderDataset:
     def __init__(self, base_folder: str or Path, file_mask: str or Parser,
-                 georef: str or Path or xr.DataArray=None, n_cache=0) -> None:
+                 georef: str or Path or xr.DataArray=None, max_cache=0) -> None:
         """Create ImageFolderDataset
 
         Note: content of the folder is scanned only once, at the class creation
@@ -45,7 +46,7 @@ class StaticImageFolderDataset:
         self._files = list(self._base_folder.rglob(self._file_mask.globify()))
         self._attrs = {self._filename2key(f): self._extract_attrs(f, relative=False) for f in self._files}
 
-        self._get_image = lru_cache(n_cache)(_get_get_image(self._georef))
+        self._get_image = lru_cache(max_cache)(_get_get_image(self._georef))
 
     def __len__(self) -> int:
         return len(self._files)
@@ -89,3 +90,33 @@ class StaticImageFolderDataset:
 
     def __iter__(self):
         return (key for key in self.keys())
+
+    def groupby(self, attr_name: str, sortby: str or None or List[str]=None, ascending: bool=True) -> "GroupedDataset":
+        sortby = sortby or []
+        if isinstance(sortby, str):
+            sortby = [sortby]
+        groups = defaultdict(lambda: [])
+        for key, attrs in sorted(self.attrs.items(), key=lambda x: tuple(x[1][sort_col] for sort_col in sortby),
+                                 reverse=not ascending):
+            groups[attrs.get(attr_name)].append(key)
+
+        return GroupedDataset(self, key_groups=groups.values(), shared_attrs=({attr_name: k} for k in groups.keys()))
+
+
+class GroupedDataset:
+    def __init__(self, parent, key_groups, shared_attrs):
+        self._parent = parent
+        self._key_groups = tuple(key_groups)
+        self._shared_attrs = tuple(shared_attrs)
+
+        if len(self._key_groups) != len(self._shared_attrs):
+            raise ValueError(f'len(key_groups) != len(shared_attrs): {len(self._key_groups)} != {len(self._shared_attrs)}')
+
+    def __len__(self):
+        return len(self._key_groups)
+
+    def __getitem__(self, i):
+        return tuple([self._parent[key] for key in self._key_groups[i]])
+
+    def __iter__(self):
+        return (self[i] for i in range(len(self)))

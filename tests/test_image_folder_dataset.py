@@ -6,6 +6,7 @@ import pytest
 
 FIXTURE_DIR = Path(__file__).parent / 'test_data'
 
+
 @pytest.mark.datafiles(FIXTURE_DIR / 'images')
 @pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
 def test_sifd(datafiles):
@@ -28,6 +29,7 @@ def test_sifd(datafiles):
         assert im.lon.min() > -1.687554
         assert im.lon.max() < 30.715534
 
+
 @pytest.mark.datafiles(FIXTURE_DIR / 'images')
 @pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
 def test_sifd_iter(datafiles):
@@ -40,12 +42,13 @@ def test_sifd_iter(datafiles):
 
     assert i == 12
 
+
 @pytest.mark.datafiles(FIXTURE_DIR / 'images')
 @pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
 def test_sifd_iter(datafiles):
     sifd = StaticImageFolderDataset(datafiles, '{projection}-{resolution}.{product}.{datetime:%Y%m%d.%H%M}.0.jpg',
                                     georef=Path(datafiles) / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif',
-                                    n_cache=50)
+                                    max_cache=50)
 
     for key in sifd.keys():
         im = sifd[key]
@@ -56,3 +59,27 @@ def test_sifd_iter(datafiles):
         im = sifd[key]
 
         assert isinstance(im, xr.DataArray)
+
+
+@pytest.mark.datafiles(FIXTURE_DIR / 'images')
+@pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
+def test_sifd_groupby(datafiles):
+    sifd = StaticImageFolderDataset(datafiles, '{projection}-{resolution}.{product}.{datetime:%Y%m%d.%H%M}.0.jpg',
+                                    georef=Path(datafiles) / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif',
+                                    max_cache=None)
+
+    group = sifd.groupby('datetime', sortby=['datetime', 'product'])
+
+    assert len(group) == 3
+    assert len(group[0]) == 4
+
+    group = sifd.groupby('product', sortby='datetime')
+
+    assert len(group) == 4
+    assert len(group[0]) == 3
+
+    i = 0
+    for g in group:
+        i += 1
+
+    assert i == 4
