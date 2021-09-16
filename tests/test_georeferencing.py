@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import pytest
 from satdl.utils import image2xr
