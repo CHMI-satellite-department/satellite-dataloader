@@ -118,5 +118,9 @@ class GroupedDataset:
     def __getitem__(self, i):
         return tuple([self._parent[key] for key in self._key_groups[i]])
 
+    @property
+    def attrs(self):
+        return self._shared_attrs
+
     def __iter__(self):
         return (self[i] for i in range(len(self)))
