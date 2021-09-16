@@ -5,9 +5,9 @@ import setuptools
 with open('README.md') as f:
     long_description = f.read()
 
-setuptools.setup(name='meteotinder-dataloader',
+setuptools.setup(name='satellite-dataloader',
                  version='0.0.1',
-                 description='Satelite data dataloader',
+                 description='Satellite dataloader',
                  long_description=long_description,
                  long_description_content_type='text/markdown',
                  author='Jakub Seidl',
@@ -16,7 +16,7 @@ setuptools.setup(name='meteotinder-dataloader',
                      'Programming Language :: Python :: 3.7',
                      'Programming Language :: Python :: 3.8'
                  ],
-                 packages=['mtdl'],
+                 packages=['satdl'],
                  install_requires=['numpy', 'pyproj', 'rasterio', 'satpy', 'trollsift', 'xarray'],
                  scripts=[]
                  )
