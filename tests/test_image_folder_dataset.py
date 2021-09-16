@@ -17,7 +17,7 @@ def test_sifd(datafiles):
 
     for attr in sifd.attrs.values():
         assert attr['projection'] == 'msgce'
-    
+
     for key in sifd.keys():
         im = sifd[key]
 
@@ -27,3 +27,15 @@ def test_sifd(datafiles):
         assert im.lat.max() < 56.64341
         assert im.lon.min() > -1.687554
         assert im.lon.max() < 30.715534
+
+@pytest.mark.datafiles(FIXTURE_DIR / 'images')
+@pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
+def test_sifd_iter(datafiles):
+    sifd = StaticImageFolderDataset(datafiles, '{projection}-{resolution}.{product}.{datetime:%Y%m%d.%H%M}.0.jpg',
+                                    georef=Path(datafiles) / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
+    i = 0
+    for key in sifd:
+        assert (Path(datafiles) / key).exists()
+        i += 1
+
+    assert i == 12
