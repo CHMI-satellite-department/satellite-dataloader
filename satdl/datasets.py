@@ -70,3 +70,6 @@ class StaticImageFolderDataset:
     def random(self) -> xr.DataArray:
         """Return random image as DataArray"""
         return self.iloc(np.rand.randint(len(self)))
+
+    def __iter__(self):
+        return (key for key in self.keys())
