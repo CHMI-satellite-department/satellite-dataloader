@@ -39,3 +39,20 @@ def test_sifd_iter(datafiles):
         i += 1
 
     assert i == 12
+
+@pytest.mark.datafiles(FIXTURE_DIR / 'images')
+@pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
+def test_sifd_iter(datafiles):
+    sifd = StaticImageFolderDataset(datafiles, '{projection}-{resolution}.{product}.{datetime:%Y%m%d.%H%M}.0.jpg',
+                                    georef=Path(datafiles) / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif',
+                                    n_cache=50)
+
+    for key in sifd.keys():
+        im = sifd[key]
+
+        assert isinstance(im, xr.DataArray)
+
+    for key in sifd.keys():
+        im = sifd[key]
+
+        assert isinstance(im, xr.DataArray)

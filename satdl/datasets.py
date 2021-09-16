@@ -1,3 +1,5 @@
+from functools import lru_cache
+import logging
 import numpy as np
 from pathlib import Path
 from trollsift import Parser
@@ -6,9 +8,21 @@ import xarray as xr
 
 from .utils import image2xr
 
+_logger = logging.getLogger(__name__)
+
+
+def _get_get_image(georef):
+
+    def _get_image(path):
+        _logger.debug(f'loading georeferenced image {path}')
+        return image2xr(path, georef=georef)
+
+    return _get_image
+
+
 class StaticImageFolderDataset:
     def __init__(self, base_folder: str or Path, file_mask: str or Parser,
-                 georef: str or Path or xr.DataArray=None) -> None:
+                 georef: str or Path or xr.DataArray=None, n_cache=0) -> None:
         """Create ImageFolderDataset
 
         Note: content of the folder is scanned only once, at the class creation
@@ -30,6 +44,8 @@ class StaticImageFolderDataset:
         self._georef = georef  # TODO: validate georeference
         self._files = list(self._base_folder.rglob(self._file_mask.globify()))
         self._attrs = {self._filename2key(f): self._extract_attrs(f, relative=False) for f in self._files}
+
+        self._get_image = lru_cache(n_cache)(_get_get_image(self._georef))
 
     def __len__(self) -> int:
         return len(self._files)
@@ -55,7 +71,7 @@ class StaticImageFolderDataset:
 
     def __getitem__(self, key: str) -> xr.DataArray:
         """Return image as DataArray from key"""
-        da = image2xr(self._base_folder / key, georef=self._georef)
+        da = self._get_image(self._base_folder / key)
         da.attrs.update(self._extract_attrs(key, relative=True))
 
         return da
