@@ -17,7 +17,7 @@ setuptools.setup(name='satellite-dataloader',
                      'Programming Language :: Python :: 3.8'
                  ],
                  packages=['satdl'],
-                 install_requires=['numpy', 'pyproj', 'rasterio', 'satpy', 'trollsift', 'xarray'],
+                 install_requires=['numpy>=0.19', 'pyproj==3.2', 'rasterio==1.2.6', 'satpy>=0.29', 'trollsift', 'xarray>=0.19'],
                  scripts=[]
                  )
 

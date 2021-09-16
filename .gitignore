@@ -2,3 +2,6 @@
 __pycache__
 meteotinder_dataloader.egg-info
 .venv
+*.egg-info
+.tox
+.coverage
