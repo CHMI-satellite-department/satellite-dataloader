@@ -23,7 +23,7 @@ def _get_get_image(georef):
 
 class StaticImageFolderDataset:
     def __init__(self, base_folder: str or Path, file_mask: str or Parser,
-                 georef: str or Path or xr.DataArray=None, max_cache=0) -> None:
+                 georef: str or Path or xr.DataArray = None, max_cache=0) -> None:
         """Create ImageFolderDataset
 
         Note: content of the folder is scanned only once, at the class creation
@@ -91,7 +91,8 @@ class StaticImageFolderDataset:
     def __iter__(self):
         return (key for key in self.keys())
 
-    def groupby(self, attr_name: str, sortby: str or None or List[str]=None, ascending: bool=True) -> "GroupedDataset":
+    def groupby(self, attr_name: str, sortby: str or None or List[str] = None,
+                ascending: bool = True) -> "GroupedDataset":
         sortby = sortby or []
         if isinstance(sortby, str):
             sortby = [sortby]
@@ -110,7 +111,8 @@ class GroupedDataset:
         self._shared_attrs = tuple(shared_attrs)
 
         if len(self._key_groups) != len(self._shared_attrs):
-            raise ValueError(f'len(key_groups) != len(shared_attrs): {len(self._key_groups)} != {len(self._shared_attrs)}')
+            raise ValueError(f'len(key_groups) != len(shared_attrs): '
+                             f'{len(self._key_groups)} != {len(self._shared_attrs)}')
 
     def __len__(self):
         return len(self._key_groups)

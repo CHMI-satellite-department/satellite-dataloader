@@ -4,7 +4,9 @@ from pyproj import CRS
 from pyproj import Transformer
 import xarray as xr
 
-def image2xr(path: str or Path, georef: str or Path or xr.DataArray=None, require_georef: bool=True) -> xr.DataArray:
+
+def image2xr(path: str or Path, georef: str or Path or xr.DataArray = None,
+             require_georef: bool = True) -> xr.DataArray:
     """Load (possibly georeferenced) image
 
     Parameters

@@ -4,6 +4,7 @@ from satdl.utils import image2xr
 
 FIXTURE_DIR = Path(__file__).parent / 'test_data'
 
+
 @pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
 def test_image2xr_georeferencing(datafiles):
     da = image2xr(str(datafiles / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif'))

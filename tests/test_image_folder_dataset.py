@@ -45,7 +45,7 @@ def test_sifd_iter(datafiles):
 
 @pytest.mark.datafiles(FIXTURE_DIR / 'images')
 @pytest.mark.datafiles(FIXTURE_DIR / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif')
-def test_sifd_iter(datafiles):
+def test_sifd_cache(datafiles):
     sifd = StaticImageFolderDataset(datafiles, '{projection}-{resolution}.{product}.{datetime:%Y%m%d.%H%M}.0.jpg',
                                     georef=Path(datafiles) / '201911271130_MSG4_msgce_1160x800_geotiff_hrv.tif',
                                     max_cache=50)
@@ -79,7 +79,7 @@ def test_sifd_groupby(datafiles):
     assert len(group[0]) == 3
 
     i = 0
-    for g in group:
+    for _ in group:
         i += 1
 
     assert i == 4
