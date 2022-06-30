@@ -1,0 +1,6 @@
+numpy >= 0.19
+pyproj >= 3.2
+rasterio == 1.2.6
+satpy >= 0.29
+trollsift
+xarray >= 0.19
